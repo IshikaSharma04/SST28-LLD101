@@ -22,31 +22,46 @@ public class TicketService {
         if (reporterEmail == null || !reporterEmail.contains("@")) throw new IllegalArgumentException("email invalid");
         if (title == null || title.trim().isEmpty()) throw new IllegalArgumentException("title required");
 
-        IncidentTicket t = new IncidentTicket(id, reporterEmail, title);
-
-        // BAD: mutating after creation
-        t.setPriority("MEDIUM");
-        t.setSource("CLI");
-        t.setCustomerVisible(false);
-
         List<String> tags = new ArrayList<>();
         tags.add("NEW");
-        t.setTags(tags);
-
-        return t;
+    
+     return new IncidentTicket.Builder(id, reporterEmail, title)
+            .priority("MEDIUM")
+            .source("CLI")
+            .customerVisible(false)
+            .tags(tags)
+            .build();
     }
 
-    public void escalateToCritical(IncidentTicket t) {
+    public IncidentTicket escalateToCritical(IncidentTicket t) {
         // BAD: mutating ticket after it has been "created"
-        t.setPriority("CRITICAL");
-        t.getTags().add("ESCALATED"); // list leak
+        List<String> tags = new ArrayList<>(t.getTags());
+        tags.add("ESCALATED");
+
+     return new IncidentTicket.Builder(t.getId(), t.getReporterEmail(), t.getTitle())
+        .description(t.getDescription())
+        .priority("CRITICAL")
+        .assigneeEmail(t.getAssigneeEmail())
+        .customerVisible(t.isCustomerVisible())
+        .slaMinutes(t.getSlaMinutes())
+        .source(t.getSource())
+        .tags(tags)
+        .build();
     }
 
-    public void assign(IncidentTicket t, String assigneeEmail) {
+    public IncidentTicket assign(IncidentTicket t, String assigneeEmail) {
         // scattered validation
         if (assigneeEmail != null && !assigneeEmail.contains("@")) {
             throw new IllegalArgumentException("assigneeEmail invalid");
         }
-        t.setAssigneeEmail(assigneeEmail);
+        return new IncidentTicket.Builder(t.getId(), t.getReporterEmail(), t.getTitle())
+        .description(t.getDescription())
+        .priority(t.getPriority())
+        .assigneeEmail(assigneeEmail)
+        .customerVisible(t.isCustomerVisible())
+        .slaMinutes(t.getSlaMinutes())
+        .source(t.getSource())
+        .tags(t.getTags())
+        .build();
     }
 }
