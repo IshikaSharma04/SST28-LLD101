@@ -84,4 +84,49 @@ public class IncidentTicket {
                 ", source='" + source + '\'' +
                 '}';
     }
+    public static class Builder {
+        private String id;
+        private String reporterEmail;
+        private String title;
+        private String description;
+        private String priority;
+        private List<String> tags = new ArrayList<>();
+        private String assigneeEmail;
+        private boolean customerVisible;
+        private Integer slaMinutes;
+        private String source;
+
+        public Builder(String id, String reporterEmail, String title) {
+            this.id = id;
+            this.reporterEmail = reporterEmail;
+            this.title = title;
+        }
+
+        public Builder description(String description) { this.description = description; return this; }
+        public Builder priority(String priority) { this.priority = priority; return this; }
+        public Builder tags(List<String> tags) { 
+            if (tags != null) this.tags = new ArrayList<>(tags); 
+            return this; 
+        }
+        public Builder assigneeEmail(String assigneeEmail) { this.assigneeEmail = assigneeEmail; return this; }
+        public Builder customerVisible(boolean customerVisible) { this.customerVisible = customerVisible; return this; }
+        public Builder slaMinutes(Integer slaMinutes) { this.slaMinutes = slaMinutes; return this; }
+        public Builder source(String source) { this.source = source; return this; }
+
+        public IncidentTicket build() {
+            IncidentTicket ticket = new IncidentTicket();
+            ticket.id = this.id;
+            ticket.reporterEmail = this.reporterEmail;
+            ticket.title = this.title;
+            ticket.description = this.description;
+            ticket.priority = this.priority;
+            ticket.tags = Collections.unmodifiableList(this.tags); // immutable
+            ticket.assigneeEmail = this.assigneeEmail;
+            ticket.customerVisible = this.customerVisible;
+            ticket.slaMinutes = this.slaMinutes;
+            ticket.source = this.source;
+            return ticket;
+        }
+    }
+
 }
