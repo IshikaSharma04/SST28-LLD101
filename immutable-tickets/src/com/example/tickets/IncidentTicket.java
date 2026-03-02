@@ -2,6 +2,7 @@ package com.example.tickets;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
 
 /**
  * INTENTION: A ticket should be an immutable record-like object.
